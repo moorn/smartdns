@@ -1,0 +1,26 @@
+
+#!/bin/sh /etc/rc.common
+# Copyright (c) 2011-2015 OpenWrt.org
+
+START=90
+
+get_config()
+{
+        config_get_bool enabled $1 enabled 0
+        config_get autoactivate $1 autoactivate 1
+}
+
+start(){
+  config_load smartdns
+        config_foreach get_config smartdns
+        [ $enabled -eq 0 ] && exit 0
+  /usr/sbin/smartdns -c /etc/smartdns/smartdns.conf
+  echo "smartdns dns Server has started."
+
+}
+
+stop(){
+                pid=`pgrep /usr/sbin/smartdns`
+                kill -9 $pid
+                echo "smartdns dns Server has stopped."
+}
